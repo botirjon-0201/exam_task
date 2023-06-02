@@ -26,6 +26,7 @@ export class OrganizationUser extends Model<OrganizationUser> {
   @Column({ type: DataType.INTEGER })
   org_id: number;
 
+  @ApiProperty({ example: 1, description: 'Foreign Key' })
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER })
   user_id: number;

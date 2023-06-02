@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   BelongsTo,
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -35,8 +36,8 @@ export class Organization extends Model<Organization> {
   @BelongsTo(() => User, 'created_by')
   created_by_user: User;
 
-  @HasMany(() => OrganizationUser)
-  organization_users: OrganizationUser[];
+  @BelongsToMany(() => User, () => OrganizationUser)
+  users: User[];
 
   @HasMany(() => Project)
   projects: Project[];
