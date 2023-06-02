@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    BelongsTo,
+  BelongsTo,
   Column,
   DataType,
   ForeignKey,
@@ -52,7 +52,7 @@ export class Task extends Model<Task> {
   worker_user_id: number;
 
   @ApiProperty({ example: 'CREATED', description: 'Task Status' })
-  status: TaskStatus;
+  status: string;
 
   @ApiProperty({ example: '2020-01-01', description: 'Done at' })
   @Column({ type: DataType.DATE })
