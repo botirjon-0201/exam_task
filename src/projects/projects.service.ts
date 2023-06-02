@@ -1,26 +1,88 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { Project } from './models/project.model';
 
 @Injectable()
 export class ProjectsService {
-  create(createProjectDto: CreateProjectDto) {
-    return 'This action adds a new project';
+  constructor(
+    @InjectModel(Project)
+    private projectModel: typeof Project,
+  ) {}
+
+  async create(userId: number, createProjectDto: CreateProjectDto) {
+    const { name } = createProjectDto;
+
+    const project = await this.findByName(name);
+    if (project)
+      throw new BadRequestException('Project that name already exists!');
+
+    await this.projectModel.create({
+      ...createProjectDto,
+      created_by: userId,
+    });
+
+    const response = { message: 'New Project created successfully!' };
+    return response;
   }
 
-  findAll() {
-    return `This action returns all projects`;
+  async findAll(userId: number) {
+    const projects = await this.projectModel.findAll({
+      where: { created_by: userId },
+      include: { all: true },
+    });
+    if (!projects) throw new NotFoundException('No any Projects');
+
+    const response = { projects, message: 'All Projects' };
+    return response;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  async findOne(id: number, userId: number) {
+    const project = await this.findById(id, userId);
+    if (!project) throw new NotFoundException('Project Not Found');
+
+    const response = { project, message: 'Project Information' };
+    return response;
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(id: number, userId: number, updateProjectDto: UpdateProjectDto) {
+    const project = await this.findById(id, userId);
+    if (!project) throw new NotFoundException('Project not found');
+
+    await this.projectModel.update(
+      { ...updateProjectDto },
+      { where: { id, created_by: userId }, returning: true },
+    );
+
+    const response = { message: 'Project information updated successfully!' };
+    return response;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  async remove(id: number, userId: number) {
+    const project = await this.findById(id, userId);
+    if (!project) throw new NotFoundException('Project not found');
+    await this.projectModel.destroy({ where: { id, created_by: userId } });
+
+    const response = { message: `Project with that #${id} id removed` };
+    return response;
+  }
+
+  async findById(id: number, userId: number): Promise<Project | null> {
+    return await this.projectModel.findOne({
+      where: { id, created_by: userId },
+      include: { all: true },
+    });
+  }
+
+  async findByName(name: string): Promise<Project | null> {
+    return await this.projectModel.findOne({
+      where: { name },
+      include: { all: true },
+    });
   }
 }
