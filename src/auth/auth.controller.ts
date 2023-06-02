@@ -1,34 +1,53 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  HttpCode,
+  HttpStatus,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { User } from '../users/models/user.model';
+import { LoginUserDto } from '../users/dto/login-user.dto';
+import { GetCookie } from '../decorators/cookie.decorator';
+import { Response } from 'express';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  @ApiOperation({ summary: 'User Sign In' })
+  @ApiResponse({ status: 200, type: User })
+  @HttpCode(HttpStatus.OK)
+  @Post('signin')
+  signin(
+    @Body() loginUserDto: LoginUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.signin(loginUserDto, res);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  @ApiOperation({ summary: 'User Sign Out' })
+  @ApiResponse({ status: 200, type: User })
+  @HttpCode(HttpStatus.OK)
+  @Post('signout')
+  signout(
+    @GetCookie('refresh_token') refresh_token: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.signout(refresh_token, res);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @ApiOperation({ summary: 'User Refresh Token' })
+  @Post('refresh/:id')
+  refresh(
+    @Param('id') id: string,
+    @GetCookie('refresh_token') refresh_token: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.refreshToken(+id, refresh_token, res);
   }
 }
