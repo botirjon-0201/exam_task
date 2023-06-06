@@ -16,9 +16,7 @@ export class ProjectsService {
   ) {}
 
   async create(userId: number, createProjectDto: CreateProjectDto) {
-    const { name } = createProjectDto;
-
-    const project = await this.findByName(name);
+    const project = await this.findByName(createProjectDto.name, userId);
     if (project)
       throw new BadRequestException('Project that name already exists!');
 
@@ -79,9 +77,9 @@ export class ProjectsService {
     });
   }
 
-  async findByName(name: string): Promise<Project | null> {
+  async findByName(name: string, userId: number): Promise<Project | null> {
     return await this.projectModel.findOne({
-      where: { name },
+      where: { name, created_by: userId },
       include: { all: true },
     });
   }
