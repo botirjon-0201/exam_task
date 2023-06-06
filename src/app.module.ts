@@ -8,6 +8,7 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { ProjectsModule } from './projects/projects.module';
 import { TasksModule } from './tasks/tasks.module';
 import { AuthModule } from './auth/auth.module';
+import { StatisticsModule } from './statistics/statistics.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AuthModule } from './auth/auth.module';
     ProjectsModule,
     TasksModule,
     AuthModule,
+    StatisticsModule,
   ],
   controllers: [],
   providers: [],
