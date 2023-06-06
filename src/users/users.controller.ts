@@ -8,6 +8,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -44,7 +45,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Find User by ID' })
   @ApiResponse({ status: 200, type: User })
   @HttpCode(HttpStatus.OK)
-  @Role('ADMIN' || 'EMPLOYEE')
+  @Role('ADMIN')
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
@@ -72,7 +73,7 @@ export class UsersController {
   @ApiResponse({ status: 200, type: User })
   @HttpCode(HttpStatus.OK)
   @Role('EMPLOYEE')
-  @Patch('update-password/:id')
+  @Put('update-password/:id')
   updatePassword(
     @Param('id') id: string,
     @Body() passwordUserDto: PasswordUserDto,
