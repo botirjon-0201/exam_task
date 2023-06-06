@@ -38,7 +38,7 @@ export class User extends Model<User> {
   name: string;
 
   @ApiProperty({ example: 'ali@gmail.com', description: 'User Email' })
-  @Column({ type: DataType.STRING(255), allowNull: false })
+  @Column({ type: DataType.STRING(255), allowNull: false, unique: true })
   email: string;
 
   @ApiProperty({ example: 'P@$$w0rd', description: 'User Password' })
@@ -54,7 +54,7 @@ export class User extends Model<User> {
   refresh_token: string;
 
   @ApiProperty({ example: 'admin', description: 'Who created it?' })
-  @Column({ type: DataType.STRING(255), defaultValue: 0, allowNull: true })
+  @Column({ type: DataType.STRING(255), defaultValue: 0, allowNull: false })
   created_by: number;
 
   @HasMany(() => Organization, 'created_by')
