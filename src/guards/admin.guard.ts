@@ -5,14 +5,12 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { User } from '../users/models/user.model';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
-    const user = request.user;
+    const { user } = context.switchToHttp().getRequest();
     if (!user || user.role !== 'ADMIN')
       throw new ForbiddenException("Sorry you don't have access to the page");
 
