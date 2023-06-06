@@ -10,11 +10,13 @@ import {
 import { User } from '../../users/models/user.model';
 import { Project } from '../../projects/models/project.model';
 
-export enum TaskStatus {
-  CREATED = 'CREATED',
-  IN_PROCESS = 'IN_PROCESS',
-  DONE = 'DONE',
-}
+export type TaskStatus = 'CREATED' | 'IN_PROCESS' | 'DONE';
+
+// export enum TaskStatus {
+//   CREATED = 'CREATED',
+//   IN_PROCESS = 'IN_PROCESS',
+//   DONE = 'DONE',
+// }
 
 @Table({ tableName: 'tasks' })
 export class Task extends Model<Task> {
@@ -27,19 +29,19 @@ export class Task extends Model<Task> {
   })
   id: number;
 
-  @ApiProperty({ example: 1, description: 'Foreign Key' })
-  @ForeignKey(() => User)
-  @Column({ type: DataType.INTEGER })
-  created_by: number;
-
-  @ApiProperty({ example: '2020-01-01', description: 'Created time' })
-  @Column({ type: DataType.DATE, defaultValue: new Date() })
-  created_at: Date;
+  @ApiProperty({ example: 'To do Ui', description: 'Task Name' })
+  @Column({ type: DataType.STRING })
+  name: string;
 
   @ApiProperty({ example: 1, description: 'Foreign Key' })
   @ForeignKey(() => Project)
   @Column({ type: DataType.INTEGER })
   project_id: number;
+
+  @ApiProperty({ example: 1, description: 'Foreign Key' })
+  @ForeignKey(() => User)
+  @Column({ type: DataType.INTEGER })
+  worker_user_id: number;
 
   @ApiProperty({ example: '2020-01-01', description: 'Due date' })
   @Column({ type: DataType.DATE })
@@ -48,10 +50,10 @@ export class Task extends Model<Task> {
   @ApiProperty({ example: 1, description: 'Foreign Key' })
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER })
-  @Column
-  worker_user_id: number;
+  created_by: number;
 
   @ApiProperty({ example: 'CREATED', description: 'Task Status' })
+  @Column({ type: DataType.STRING, defaultValue: 'CREATED' })
   status: string;
 
   @ApiProperty({ example: '2020-01-01', description: 'Done at' })
