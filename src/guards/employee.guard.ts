@@ -19,7 +19,7 @@ export class EmployeeGuard implements CanActivate {
         (org) => org.OrganizationUser.user_id === user.id,
       )
     )
-      throw new ForbiddenException("Sorry you aren't head of organization");
+      throw new ForbiddenException("Sorry you aren't employee of organization");
 
     return true;
   }
