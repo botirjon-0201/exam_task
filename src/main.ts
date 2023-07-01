@@ -16,7 +16,7 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/exam-task', app, document);
 
-    const PORT = process.env.PORT || 5555;
+    const PORT = process.env.PORT || 5000;
     await app.listen(PORT);
     console.log(`Server is working on port ${PORT}`);
   } catch (error) {
